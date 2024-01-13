@@ -9,6 +9,9 @@ app = Flask(__name__)
 IMAGES_BASE_PATH="/Users/melanie.hanna/basic_annotation_tool/images"
 METADATA_PATH="/Users/melanie.hanna/basic_annotation_tool/metadata/test_metadata.csv"
 
+# add smart_sort as an argument instead of a button?
+smart_sort = True
+
 @app.route('/images/<path:filename>')
 def custom_static(filename):
     return send_from_directory(os.getenv('IMAGES_BASE_PATH'), filename)
@@ -16,7 +19,7 @@ def custom_static(filename):
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    data_manager.init(METADATA_PATH, IMAGES_BASE_PATH)
+    data_manager.init(METADATA_PATH, IMAGES_BASE_PATH, smart_sort)
     if request.method == 'POST':
         action = request.form.get('action')
         if action == 'change_label':

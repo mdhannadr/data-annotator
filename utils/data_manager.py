@@ -1,15 +1,21 @@
 import pandas as pd
+import numpy as np
 import os
 
 
 class DataManager:
-    def __init__(self):
-        self.df = None
+    def __init__(self, metadata_path, images_base_path, smart_sort=False):
         self.current_index = 0
-
-    def init(self, metadata_path, images_base_path):
         self.df = pd.read_csv(metadata_path)
+        # TODO: what happens if no prediction provided?
+        if self.smart_sort:
+            self.df = self.sort_by_certainty()
         self.images_base_path = images_base_path
+
+    def sort_by_certainty(self):
+        pred_cols = [x for x in self.df.columns if x.startswith('class')]
+        self.df['certainty'] = self.df[pred_cols].var(axis='columns')
+        return self.df.sort_values(by='certainty', ascending=True)
 
     def current_data(self):
         data = self.df.iloc[self.current_index].copy()
