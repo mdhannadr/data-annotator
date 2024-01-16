@@ -6,14 +6,20 @@ import os
 class DataManager:
     def __init__(self, metadata_path, images_base_path, smart_sort=False):
         self.current_index = 0
-        self.df = pd.read_csv(metadata_path)
-        if smart_sort:
-            self.df = self.sort_by_certainty()
-        else:
-            self.df = pd.
         self.images_base_path = images_base_path
+        self.df = pd.read_csv(metadata_path)
+        self.labels = self.df['label'].unique()
+        if 'prediction' not in self.df.columns:
+            # create blank df for adding labels
+            files = os.listdir(self.images_base_path)
+            files = [file for file in files if os.path.isfile(os.path.join(self.images_base_path, file))]
+            self.df =  pd.DataFrame(columns=['prediction', 'label', 'image_path'], index=range(len(files)))
+            self.df['image_path'] = files
+        else:
+            if smart_sort:
+                self.df = self._sort_by_certainty()
 
-    def sort_by_certainty(self):
+    def _sort_by_certainty(self):
         pred_cols = [x for x in self.df.columns if x.startswith('class')]
         self.df['certainty'] = self.df[pred_cols].var(axis='columns')
         return self.df.sort_values(by='certainty', ascending=True)
@@ -23,9 +29,8 @@ class DataManager:
         data['image_path'] = '/images/' + data['image_path']
         return data
 
-    # TODO: this presumes that all possible labels have surfaced
     def unique_labels(self):
-        return self.df['label'].unique()
+        return self.labels
 
     def change_label(self, new_label):
         self.df.at[self.current_index, 'label'] = new_label

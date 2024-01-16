@@ -2,13 +2,10 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from utils.data_manager import DataManager
 
-
 # TODO: make these arguments you pass in
 IMAGES_BASE_PATH="/Users/melanie.hanna/basic_annotation_tool/images/"
-METADATA_PATH="/Users/melanie.hanna/basic_annotation_tool/metadata/test_metadata.csv" # optional arg
-
-# add smart_sort as an argument instead of a button?
-smart_sort = True
+METADATA_PATH="/Users/melanie.hanna/basic_annotation_tool/metadata/test_metadata.csv"
+smart_sort = False
 
 data_manager = DataManager(METADATA_PATH, IMAGES_BASE_PATH, smart_sort)
 
@@ -39,4 +36,4 @@ def index():
     return render_template('index.html', data=data_manager.current_data(), labels=data_manager.unique_labels(), progress=data_manager.get_progress())
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)
