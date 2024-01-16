@@ -1,19 +1,26 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from utils.data_manager import DataManager
+import argparse
 
-# TODO: make these arguments you pass in
-IMAGES_BASE_PATH="/Users/melanie.hanna/basic_annotation_tool/images/"
-METADATA_PATH="/Users/melanie.hanna/basic_annotation_tool/metadata/test_metadata.csv"
-smart_sort = False
+parser = argparse.ArgumentParser()
+parser.add_argument('img_path', type=str, help='Absolute path to image files')
+parser.add_argument('data_path', type=str, help='Absolute path to label data')
+parser.add_argument('--smart_sort', type=bool, default=False, help='Whether or not to sort predictions by certainty')
 
-data_manager = DataManager(METADATA_PATH, IMAGES_BASE_PATH, smart_sort)
+# Parse command-line arguments
+args = parser.parse_args()
+images_base_path=args.img_path #"/Users/melanie.hanna/basic_annotation_tool/images/"
+metadata_path=args.data_path #="/Users/melanie.hanna/basic_annotation_tool/metadata/test_metadata.csv"
+smart_sort = args.smart_sort
+
+data_manager = DataManager(metadata_path, images_base_path, smart_sort)
 
 app = Flask(__name__)
 
 @app.route('/images/<path:filename>')
 def custom_static(filename):
-    return send_from_directory(IMAGES_BASE_PATH, filename)
+    return send_from_directory(images_base_path, filename)
 
 
 @app.route("/", methods=['GET', 'POST'])

@@ -4,7 +4,7 @@ import os
 
 
 class DataManager:
-    def __init__(self, metadata_path, images_base_path, smart_sort=False):
+    def __init__(self, metadata_path, images_base_path, smart_sort):
         self.current_index = 0
         self.images_base_path = images_base_path
         self.df = pd.read_csv(metadata_path)

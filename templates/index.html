@@ -15,14 +15,13 @@
             <p>{{ progress.current }}/{{ progress.total }}</p>
         </div>
         <div class="side-bar">
-            <select name="label" form="changeLabelForm">
+            <select name="new_label" form="changeLabelForm">
                 {% for label in labels %}
                 <option value="{{ label }}" {% if label == data.label %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
             <form id="changeLabelForm" action="/" method="post">
                 <input type="hidden" name="action" value="change_label">
-                <input type="hidden" name="new_label">
                 <button id="changeLabelButton" type="submit">Change Label</button>
             </form>
             <form action="/" method="post">
