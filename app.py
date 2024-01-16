@@ -2,24 +2,25 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 from utils.data_manager import DataManager
 
-data_manager = DataManager()
 
-app = Flask(__name__)
-
-IMAGES_BASE_PATH="/Users/melanie.hanna/basic_annotation_tool/images"
-METADATA_PATH="/Users/melanie.hanna/basic_annotation_tool/metadata/test_metadata.csv"
+# TODO: make these arguments you pass in
+IMAGES_BASE_PATH="/Users/melanie.hanna/basic_annotation_tool/images/"
+METADATA_PATH="/Users/melanie.hanna/basic_annotation_tool/metadata/test_metadata.csv" # optional arg
 
 # add smart_sort as an argument instead of a button?
 smart_sort = True
 
+data_manager = DataManager(METADATA_PATH, IMAGES_BASE_PATH, smart_sort)
+
+app = Flask(__name__)
+
 @app.route('/images/<path:filename>')
 def custom_static(filename):
-    return send_from_directory(os.getenv('IMAGES_BASE_PATH'), filename)
+    return send_from_directory(IMAGES_BASE_PATH, filename)
 
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
-    data_manager.init(METADATA_PATH, IMAGES_BASE_PATH, smart_sort)
     if request.method == 'POST':
         action = request.form.get('action')
         if action == 'change_label':

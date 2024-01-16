@@ -7,9 +7,10 @@ class DataManager:
     def __init__(self, metadata_path, images_base_path, smart_sort=False):
         self.current_index = 0
         self.df = pd.read_csv(metadata_path)
-        # TODO: what happens if no prediction provided?
-        if self.smart_sort:
+        if smart_sort:
             self.df = self.sort_by_certainty()
+        else:
+            self.df = pd.
         self.images_base_path = images_base_path
 
     def sort_by_certainty(self):
@@ -22,6 +23,7 @@ class DataManager:
         data['image_path'] = '/images/' + data['image_path']
         return data
 
+    # TODO: this presumes that all possible labels have surfaced
     def unique_labels(self):
         return self.df['label'].unique()
 
@@ -29,7 +31,7 @@ class DataManager:
         self.df.at[self.current_index, 'label'] = new_label
 
     def use_predicted_label(self):
-        self.df.at[self.current_index, 'label'] = self.df.at[self.current_index, 'predicted_label']
+        self.df.at[self.current_index, 'label'] = self.df.at[self.current_index, 'prediction']
 
     def next_image(self):
         self.current_index = min(self.current_index + 1, len(self.df) - 1)
